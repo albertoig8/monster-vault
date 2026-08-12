@@ -1,6 +1,4 @@
-node_modules
-.env.local
-=======
+
 # Logs
 logs
 *.log
@@ -31,4 +29,3 @@ firebaseServiceAccountKey.json
 *.njsproj
 *.sln
 *.sw?
->>>>>>> feature/alberto-araujo/create-application-init
