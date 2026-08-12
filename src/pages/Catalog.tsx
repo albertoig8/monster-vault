@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { authService } from '../services/firebase/auth';
 import { canService, type CanFilter } from '../services/cans/canService';
-import { catalogMetadataService } from '../services/cans/catalogMetadataService';
+import SyncStatus from '../components/SyncStatus';
 import type { MonsterCan } from '../types';
 import './Catalog.css';
 
@@ -30,8 +30,8 @@ export default function Catalog() {
   const [showActive, setShowActive] = useState(true);
   const [showDiscontinued, setShowDiscontinued] = useState(false);
 
-  // Metadados de sincronização
-  const [syncInfo, setSyncInfo] = useState('');
+  // State para recarregar quando sincroniza
+  const [syncTrigger, setSyncTrigger] = useState(0);
 
   const navigate = useNavigate();
 
@@ -66,10 +66,6 @@ export default function Catalog() {
         setSizes(sizesData);
         setYears(yearsData);
         setCategories(categoriesData);
-
-        // Carregar informações de sincronização
-        const info = await catalogMetadataService.getDisplayInfo();
-        setSyncInfo(info);
       } catch (err) {
         console.error('Erro ao carregar catálogo:', err);
         setError('Erro ao carregar catálogo');
@@ -79,7 +75,7 @@ export default function Catalog() {
     };
 
     loadData();
-  }, [navigate]);
+  }, [navigate, syncTrigger]);
 
   // Aplicar filtros quando mudam
   useEffect(() => {
@@ -223,8 +219,10 @@ export default function Catalog() {
       <div className="catalog-header">
         <h1>Catálogo de Latas</h1>
         <p>Total: {cans.length} latas | Mostrando: {filteredCans.length}</p>
-        {syncInfo && <p className="sync-info">📅 {syncInfo}</p>}
       </div>
+
+      {/* Componente de Status de Sincronização */}
+      <SyncStatus onSyncComplete={() => setSyncTrigger(prev => prev + 1)} />
 
       <div className="search-section">
         <input

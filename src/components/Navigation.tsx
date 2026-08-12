@@ -23,6 +23,9 @@ export default function Navigation() {
         <Link to="/wishlist" className={`nav-link ${isActive('/wishlist')}`}>
           Wishlist
         </Link>
+        <Link to="/admin" className={`nav-link ${isActive('/admin')} admin-link`}>
+          🔧 Admin
+        </Link>
       </div>
     </nav>
   );
