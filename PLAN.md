@@ -1,487 +1,259 @@
-# Monster Vault — Development Plan
+# Monster Vault — Catalog & Data Synchronization Plan
 
-## 1. Project Overview
+## 1. Objective
 
-Monster Vault is a web application for managing and cataloging a personal collection of Monster Energy cans.
+Implement a reliable catalog system for Monster Energy cans.
 
-The application should allow users to:
-
-* Browse a catalog of Monster Energy cans.
-* Search and filter cans.
-* View detailed information about a can.
-* Add cans to their personal collection.
-* Remove cans from their collection.
-* Track quantities and duplicates.
-* Create a wishlist of cans they want to collect.
-* View statistics about their collection.
-* Automatically update the global can catalog once per day.
-
-The project should initially focus on simplicity, maintainability, and a clean user experience.
-
-Do not implement advanced features before the MVP is complete.
-
----
-
-# 2. Technology Stack
-
-Use the following technologies:
-
-* React
-* TypeScript
-* Firebase
-* Firebase Authentication
-* Cloud Firestore
-* Firebase Cloud Functions
-* Firebase Hosting or Vercel
-* CSS for styling
-
-Avoid adding unnecessary libraries.
-
-Prefer native React functionality and simple solutions whenever possible.
-
-The application should be responsive and work well on desktop and mobile devices.
-
----
-
-# 3. Architecture
-
-Separate the application into two main concepts:
-
-## Global Catalog
-
-The global catalog contains all known Monster Energy cans.
-
-Example information:
-
-```text
-id
-name
-flavor
-description
-category
-size
-country
-releaseYear
-imageUrl
-barcode
-caffeine
-sugar
-discontinued
-createdAt
-updatedAt
-```
-
-## User Collection
-
-The user's collection references cans from the global catalog.
-
-Do not duplicate complete can information inside the user's collection.
-
-The relationship should be:
-
-```text
-User
-  |
-  └── Collection
-        |
-        ├── Can A
-        ├── Can B
-        └── Can C
-
-Can Catalog
-  |
-  ├── Can A
-  ├── Can B
-  ├── Can C
-  └── Can D
-```
-
-A user collection item should contain information such as:
-
-```text
-canId
-quantity
-addedAt
-notes
-```
-
----
-
-# 4. Firestore Structure
-
-Use the following initial structure:
-
-```text
-users
-  └── {userId}
-       ├── name
-       ├── email
-       └── createdAt
-
-cans
-  └── {canId}
-       ├── name
-       ├── flavor
-       ├── description
-       ├── category
-       ├── size
-       ├── country
-       ├── releaseYear
-       ├── imageUrl
-       ├── barcode
-       ├── caffeine
-       ├── sugar
-       ├── discontinued
-       ├── createdAt
-       └── updatedAt
-
-users/{userId}/collection
-  └── {canId}
-       ├── quantity
-       ├── addedAt
-       └── notes
-
-users/{userId}/wishlist
-  └── {canId}
-       └── addedAt
-```
-
-Use the can document ID as the reference in the user's collection.
-
----
-
-# 5. Project Structure
-
-Use a clean and simple structure similar to:
-
-```text
-src/
-├── components/
-├── pages/
-│   ├── Home/
-│   ├── Catalog/
-│   ├── Collection/
-│   ├── CanDetails/
-│   ├── AddCan/
-│   └── Wishlist/
-├── services/
-│   ├── firebase/
-│   ├── cans/
-│   └── collection/
-├── hooks/
-├── types/
-├── utils/
-├── routes/
-└── App.tsx
-
-functions/
-├── src/
-│   ├── catalog/
-│   └── index.ts
-└── package.json
-```
-
-Keep components small and focused.
-
-Do not create abstractions unless they provide real value.
-
----
-
-# 6. MVP — Phase 1
-
-The first goal is to create a fully functional MVP.
-
-Implement the following features first.
-
-## 6.1 Application Layout
-
-Create:
-
-* Header
-* Navigation
-* Main content area
-* Responsive layout
-
-Navigation should contain:
-
-```text
-Home
-Catalog
-My Collection
-Wishlist
-```
-
-Authentication can initially be kept simple.
-
----
-
-# 7. Catalog
-
-Create a Catalog page displaying all cans stored in Firestore.
-
-Each can should display:
-
-* Image
-* Name
-* Flavor
-* Country
-* Size
-* Release year
-* Availability/discontinued status
-
-Use a card-based layout.
-
-Example:
-
-```text
-┌──────────────────────────┐
-│                          │
-│       CAN IMAGE          │
-│                          │
-├──────────────────────────┤
-│ Monster Ultra Violet     │
-│ Grape                    │
-│ 🇺🇸 USA                   │
-│ 473ml                    │
-│                          │
-│ [ View Details ]         │
-└──────────────────────────┘
-```
-
----
-
-# 8. Search
-
-Add a search field to the Catalog page.
-
-The user should be able to search by:
-
-* Name
-* Flavor
-* Country
-
-The search experience should be simple and responsive.
-
-Avoid implementing complex search infrastructure during the MVP.
-
----
-
-# 9. Can Details
-
-Create a details page for each can.
-
-Display:
-
-* Large image
-* Name
-* Flavor
-* Description
-* Country
-* Size
-* Release year
-* Barcode
-* Caffeine
-* Sugar
-* Discontinued status
-
-Include:
-
-```text
-[ Add to Collection ]
-[ Add to Wishlist ]
-```
-
-If the can is already in the collection, display its current quantity.
-
-Example:
-
-```text
-Monster Mango Loco
-
-Mango flavored energy drink
-
-Country: Brazil
-Size: 473ml
-Year: 2024
-
-Quantity owned: 2
-
-[ - ] 2 [ + ]
-
-[ Remove from Collection ]
-```
-
----
-
-# 10. My Collection
-
-Create a page where the user can see all cans they own.
-
-Display:
-
-```text
-My Collection
-
-Total Cans: 124
-Unique Cans: 87
-Different Flavors: 38
-Countries: 12
-```
-
-Below the statistics, display the collection as cards.
-
-Each card should show:
-
-* Image
-* Name
-* Flavor
-* Country
-* Quantity
-
-Allow the user to:
-
-* Increase quantity
-* Decrease quantity
-* Remove the can
-
-Do not duplicate can information in Firestore.
-
-Load can information from the global `cans` collection using the `canId`.
-
----
-
-# 11. Wishlist
-
-Create a Wishlist page.
-
-The user should be able to add a catalog item to the wishlist.
-
-Display:
-
-```text
-My Wishlist
-
-12 cans
-
-[ Can cards ]
-```
-
-Each item should have:
-
-```text
-[ Add to Collection ]
-[ Remove from Wishlist ]
-```
-
-When adding an item from the wishlist to the collection:
-
-1. Add it to the collection.
-2. Remove it from the wishlist.
-
----
-
-# 12. Authentication
-
-Use Firebase Authentication.
-
-Initially support:
-
-* Email/password
-* Google authentication if simple to configure
-
-Users must only be able to access and modify their own:
-
-```text
-users/{userId}/collection
-users/{userId}/wishlist
-```
-
-The global `cans` collection should be readable by authenticated users.
-
-Only backend/admin functionality should modify the global catalog.
-
-Configure Firestore security rules accordingly.
-
-Never expose administrative Firebase credentials in the frontend.
-
----
-
-# 13. Catalog Data Source
-
-Find a reliable external source containing Monster Energy product information.
-
-Possible sources include:
-
-* Open Food Facts
-* Public product APIs
-* Public datasets
-* Public GitHub datasets
-* Other reliable sources containing product information
-
-Prioritize sources that provide:
+The goal is to build and maintain a local catalog in Firebase Firestore containing information about Monster Energy cans, including:
 
 * Product name
 * Flavor
 * Country
+* Size
 * Barcode
-* Image
+* Product image
+* Release year
 * Nutritional information
+* Discontinued status
+* Data source
+* Verification status
 
-Do not make the frontend depend directly on the external API.
+The application must NOT depend directly on external APIs during normal frontend usage.
 
-The external API should only be used by the backend synchronization process.
+Firestore must be the primary data source for the application.
+
+External sources should only be used by backend synchronization/import processes.
 
 ---
 
-# 14. Daily Catalog Synchronization
+# 2. Data Sources
 
-Create a Firebase Cloud Function responsible for synchronizing the external catalog.
+Use multiple sources whenever possible.
 
-The function should run once per day.
+The initial sources should be:
 
-Flow:
+## 2.1 Open Food Facts
+
+Use Open Food Facts as the primary automated source.
+
+Potential information:
+
+* Product name
+* Brand
+* Barcode
+* Ingredients
+* Nutritional information
+* Product images
+* Country
+* Product size
+
+The integration should use the Open Food Facts API.
+
+Do not assume that Open Food Facts contains every Monster Energy product.
+
+Missing products are expected.
+
+---
+
+## 2.2 Monster Energy Official Website
+
+Use the official Monster Energy website as a secondary source.
+
+Use it primarily to:
+
+* Validate currently available products.
+* Validate product names.
+* Validate flavors.
+* Validate product images when possible.
+* Detect currently marketed products.
+
+Do not treat the official website as a historical database.
+
+A product disappearing from the official website must NOT automatically mean that the product should be deleted from Monster Vault.
+
+---
+
+## 2.3 Community Sources
+
+Community websites and public datasets can be used as supplementary sources for historical products.
+
+One example is Can Collector.
+
+Do not scrape or reuse data from websites unless their terms or permission allow it.
+
+If a source does not provide a public API or explicitly allow automated data reuse, do not implement scraping.
+
+Community data can instead be imported manually through a controlled import process.
+
+---
+
+# 3. Important Data Philosophy
+
+Monster Vault is a collection application.
+
+Therefore, historical products are important.
+
+A can that is no longer available commercially must remain in the database.
+
+Never automatically delete a can because it disappeared from an external source.
+
+Instead:
 
 ```text
-Scheduled Function
-       ↓
-External API
-       ↓
-Fetch products
-       ↓
-Normalize data
-       ↓
-Validate data
-       ↓
-Compare with Firestore
-       ↓
-Create new cans
-       ↓
-Update existing cans
-       ↓
-Mark discontinued products when appropriate
+discontinued = true
 ```
 
-The synchronization must be idempotent.
-
-Running the function multiple times should not create duplicate cans.
-
-Use a stable identifier whenever possible.
-
-Preferred identifiers:
-
-1. Barcode
-2. External API product ID
-3. Generated deterministic ID
-
-Do not use random IDs when synchronization requires identifying the same product later.
+The catalog should preserve historical products.
 
 ---
 
-# 15. Catalog Synchronization Metadata
+# 4. Canonical Monster Can Model
 
-Create a document to store synchronization information.
+Create a normalized internal model.
 
 Example:
+
+```typescript
+interface MonsterCan {
+  id: string;
+
+  brand: string;
+
+  name: string;
+
+  flavor?: string;
+
+  description?: string;
+
+  category?: string;
+
+  country?: string;
+
+  size?: string;
+
+  barcode?: string;
+
+  imageUrl?: string;
+
+  releaseYear?: number;
+
+  caffeine?: number;
+
+  sugar?: number;
+
+  discontinued: boolean;
+
+  edition?: string;
+
+  verified: boolean;
+
+  sources: CanSource[];
+
+  createdAt: Timestamp;
+
+  updatedAt: Timestamp;
+}
+```
+
+Source model:
+
+```typescript
+interface CanSource {
+  provider: string;
+
+  externalId?: string;
+
+  url?: string;
+
+  lastCheckedAt?: Timestamp;
+}
+```
+
+Do not expose external API models directly to the React application.
+
+---
+
+# 5. Product Identity
+
+The system needs a reliable way to determine whether two records represent the same can.
+
+Use the following priority:
+
+```text
+1. Barcode
+2. External provider ID
+3. Deterministic generated ID
+```
+
+Do not use random IDs when synchronizing products.
+
+Example:
+
+```text
+monster-ultra-violet-us-473ml
+```
+
+However, if a barcode exists, it should be preferred as the canonical identifier or unique identity key.
+
+---
+
+# 6. Country-Specific Products
+
+Treat country as part of the product identity when appropriate.
+
+The same flavor may have different cans in different countries.
+
+Example:
+
+```text
+Monster Ultra Violet
+
+USA
+473ml
+
+UK
+500ml
+
+Brazil
+473ml
+```
+
+Do not automatically merge these into a single product.
+
+A collector may own the US version and not the Brazilian version.
+
+The catalog should support country-specific variations.
+
+---
+
+# 7. Firestore Structure
+
+Use the following structure:
+
+```text
+cans
+  └── {canId}
+       ├── brand
+       ├── name
+       ├── flavor
+       ├── description
+       ├── category
+       ├── country
+       ├── size
+       ├── barcode
+       ├── imageUrl
+       ├── releaseYear
+       ├── caffeine
+       ├── sugar
+       ├── discontinued
+       ├── edition
+       ├── verified
+       ├── sources
+       ├── createdAt
+       └── updatedAt
+```
+
+Create a separate metadata document:
 
 ```text
 catalogMetadata
@@ -492,521 +264,761 @@ catalogMetadata
        ├── totalProcessed
        ├── totalCreated
        ├── totalUpdated
+       ├── totalSkipped
        └── lastError
 ```
 
-The application can display:
+---
+
+# 8. Synchronization Architecture
+
+The architecture should be:
 
 ```text
-Catalog last updated:
-August 12, 2026
+External Sources
+       |
+       v
+Cloud Function
+       |
+       v
+Fetch Data
+       |
+       v
+Normalize Data
+       |
+       v
+Validate Data
+       |
+       v
+Identify Existing Products
+       |
+       +------ Existing ------> Update
+       |
+       +------ New -----------> Create
+       |
+       v
+Firestore
+       |
+       v
+React Application
 ```
 
-Only update `lastSuccessfulAt` when the synchronization finishes successfully.
+The React frontend must never call Open Food Facts directly for normal catalog browsing.
 
 ---
 
-# 16. Data Normalization
+# 9. Cloud Function
 
-External API data should be normalized before being saved to Firestore.
+Create a Firebase Cloud Function responsible for catalog synchronization.
 
-Create a normalized internal model:
+The function should:
 
-```typescript
-interface MonsterCan {
-  id: string;
-  name: string;
-  flavor?: string;
-  description?: string;
-  category?: string;
-  size?: string;
-  country?: string;
-  releaseYear?: number;
-  imageUrl?: string;
-  barcode?: string;
-  caffeine?: number;
-  sugar?: number;
-  discontinued: boolean;
-  createdAt: Timestamp;
-  updatedAt: Timestamp;
+1. Start synchronization.
+2. Record `lastStartedAt`.
+3. Fetch products from Open Food Facts.
+4. Normalize the external data.
+5. Validate required fields.
+6. Identify existing cans.
+7. Create new cans.
+8. Update existing cans.
+9. Preserve historical cans.
+10. Update synchronization metadata.
+11. Record errors if synchronization fails.
+
+Use appropriate batching when writing many Firestore documents.
+
+Do not perform thousands of individual writes when Firestore batch writes can be used.
+
+---
+
+# 10. Daily Schedule
+
+Configure the Cloud Function to execute once per day.
+
+Example:
+
+```text
+03:00 UTC
+```
+
+The exact time can be changed later.
+
+The important requirement is:
+
+```text
+once every 24 hours
+```
+
+The synchronization should be safe to execute multiple times.
+
+---
+
+# 11. Idempotency
+
+Synchronization must be idempotent.
+
+Running:
+
+```text
+sync()
+sync()
+sync()
+```
+
+must NOT create:
+
+```text
+Monster Ultra Violet #1
+Monster Ultra Violet #2
+Monster Ultra Violet #3
+```
+
+It must always resolve to the same catalog product.
+
+---
+
+# 12. Data Normalization
+
+Create a dedicated normalization layer.
+
+Example:
+
+```text
+OpenFoodFactsProduct
+          |
+          v
+normalizeOpenFoodFactsProduct()
+          |
+          v
+MonsterCan
+```
+
+The normalization process should:
+
+* Normalize product names.
+* Normalize country names.
+* Normalize sizes.
+* Extract flavor information when possible.
+* Extract barcode.
+* Extract image URL.
+* Extract nutritional information.
+* Remove invalid values.
+* Normalize missing values.
+
+Do not put normalization logic inside React components.
+
+---
+
+# 13. Data Validation
+
+Before saving a product, validate the data.
+
+At minimum:
+
+```text
+name
+brand
+```
+
+should exist.
+
+Prefer products with:
+
+```text
+barcode
+image
+country
+size
+```
+
+but do not reject every product that lacks optional information.
+
+For example, this should still be allowed:
+
+```json
+{
+  "name": "Monster Ultra Violet",
+  "brand": "Monster Energy",
+  "country": "USA",
+  "imageUrl": null
 }
 ```
 
-External API models should not be used directly throughout the application.
-
-Create a mapper/adapter between external data and the internal `MonsterCan` model.
+The frontend must gracefully handle missing images.
 
 ---
 
-# 17. Home Dashboard
+# 14. Image Handling
 
-Create a simple dashboard.
+Prefer external image URLs initially.
 
-Display:
+Do not download every product image into Firebase Storage during the first implementation.
 
-```text
-Welcome to Monster Vault
-
-Your Collection
-
-124 Cans
-87 Unique Cans
-38 Flavors
-12 Countries
-```
-
-Also display:
+Store:
 
 ```text
-Collection Progress
-
-87 / 200 known cans
+imageUrl
 ```
 
-And a small section:
+in Firestore.
 
-```text
-Recently Added
-```
+If the external image source proves unreliable later, implement an image migration process to Firebase Storage.
 
-showing the latest cans added to the user's collection.
+The frontend should display a placeholder when an image is missing.
 
 ---
 
-# 18. Filters
+# 15. Source Tracking
 
-After the basic catalog is working, add filters:
+Every product should maintain information about where its data came from.
+
+Example:
+
+```json
+{
+  "sources": [
+    {
+      "provider": "open-food-facts",
+      "externalId": "123456789",
+      "lastCheckedAt": "..."
+    }
+  ]
+}
+```
+
+If information is found from multiple sources:
+
+```json
+{
+  "sources": [
+    {
+      "provider": "open-food-facts"
+    },
+    {
+      "provider": "monster-energy"
+    }
+  ]
+}
+```
+
+Do not overwrite the complete source list when updating a product.
+
+Merge source information.
+
+---
+
+# 16. Product Updates
+
+When an existing product is found:
+
+* Update fields that have better/newer information.
+* Preserve manually entered information.
+* Preserve historical metadata.
+* Preserve verification status when appropriate.
+* Update `updatedAt`.
+
+Do not blindly replace the entire Firestore document with the external API response.
+
+The external API does not necessarily contain all Monster Vault fields.
+
+---
+
+# 17. Manual Data
+
+The database must support manually curated information.
+
+Some information may not be available through APIs.
+
+Examples:
 
 ```text
+releaseYear
+edition
+rarity
+historical notes
+collector notes
+```
+
+External synchronization must not erase manually curated fields.
+
+Consider marking manually maintained fields internally if necessary.
+
+---
+
+# 18. Discontinued Products
+
+Never delete products automatically.
+
+If an external source indicates that a product is no longer available:
+
+```text
+discontinued = true
+```
+
+If a product disappears from a source without explicit evidence of discontinuation:
+
+```text
+Do not automatically mark it as discontinued.
+```
+
+Absence from an API is not sufficient evidence that a product has been discontinued.
+
+---
+
+# 19. Duplicate Detection
+
+Create a duplicate detection strategy.
+
+Possible matching criteria:
+
+```text
+barcode
+```
+
+then:
+
+```text
+external provider ID
+```
+
+then a combination such as:
+
+```text
+normalized name
++
+country
++
+size
+```
+
+Do not merge products automatically when confidence is low.
+
+If uncertain, skip automatic merging and log the potential duplicate.
+
+---
+
+# 20. Synchronization Logs
+
+The Cloud Function should produce useful logs.
+
+Example:
+
+```text
+Catalog synchronization started.
+
+Provider: Open Food Facts
+
+Products fetched: 542
+
+Products processed: 542
+Products created: 18
+Products updated: 103
+Products skipped: 421
+
+Synchronization completed successfully.
+```
+
+For errors:
+
+```text
+Catalog synchronization failed.
+
+Provider: Open Food Facts
+
+Error: API request failed.
+
+No catalog data was deleted.
+```
+
+Never delete existing catalog data because an external API temporarily fails.
+
+---
+
+# 21. Failure Safety
+
+If an external API is unavailable:
+
+```text
+Do NOT modify existing products.
+Do NOT delete products.
+Do NOT mark products as discontinued.
+```
+
+The synchronization should simply fail and record the error.
+
+The next scheduled synchronization can try again.
+
+---
+
+# 22. API Rate Limits
+
+Respect external API rate limits.
+
+Do not make unnecessary requests.
+
+Use pagination where supported.
+
+Do not request the same product repeatedly during a single synchronization.
+
+If the API provides bulk datasets or efficient search endpoints, prefer them over thousands of individual requests.
+
+---
+
+# 23. Initial Catalog Import
+
+Before enabling daily synchronization:
+
+Create an initial import process.
+
+The process should:
+
+1. Fetch available Monster Energy products.
+2. Normalize them.
+3. Validate them.
+4. Save them to Firestore.
+5. Report the number of products imported.
+
+Example:
+
+```text
+Initial catalog import
+
+Fetched: 500
+Created: 350
+Skipped: 150
+Errors: 0
+```
+
+This allows the application to start with an existing catalog.
+
+---
+
+# 24. Admin Synchronization
+
+Create an internal mechanism to manually trigger synchronization during development.
+
+For example:
+
+```text
+POST /sync-catalog
+```
+
+or an authenticated Firebase callable function.
+
+This should be protected.
+
+Do not expose an unrestricted synchronization endpoint publicly.
+
+This is useful for testing instead of waiting 24 hours.
+
+---
+
+# 25. Frontend Catalog
+
+The React application should only query:
+
+```text
+Firestore -> cans
+```
+
+The frontend should not know:
+
+* Open Food Facts API structure
+* Monster website structure
+* Synchronization logic
+* External API credentials
+* Provider-specific implementation
+
+The frontend should only understand:
+
+```typescript
+MonsterCan
+```
+
+---
+
+# 26. Catalog UI
+
+The Catalog page should display:
+
+```text
+Monster Vault
+
+Search cans...
+
+Filters:
+
 Country
 Flavor
 Size
-Release Year
+Year
 Status
+
+--------------------------------
+
+[Can Card]
+[Can Card]
+[Can Card]
+[Can Card]
 ```
 
-Add sorting:
+Each card:
 
 ```text
-Name
-Newest
-Oldest
-Country
-```
+Image
 
-Keep the implementation simple.
+Monster Ultra Violet
+Grape
+
+🇺🇸 USA
+473ml
+
+[ View Details ]
+```
 
 ---
 
-# 19. Collection Statistics
+# 27. Catalog Status
 
-Create useful statistics:
-
-```text
-Total cans
-Unique cans
-Different flavors
-Different countries
-Duplicate cans
-```
+Display synchronization information somewhere in the application.
 
 Example:
 
 ```text
-Total Cans       124
-Unique Cans       87
-Duplicates        37
-Flavors           38
-Countries         12
+Catalog updated:
+August 12, 2026
 ```
 
-Do not introduce a complex analytics system.
-
-Calculate these values from the user's collection when practical.
-
----
-
-# 20. Future Features
-
-Do not implement these features during the MVP.
-
-Keep them as future roadmap items.
-
-## Barcode Scanner
-
-Allow users to scan the barcode on a can.
-
-Flow:
+If the last synchronization failed:
 
 ```text
-Camera
-   ↓
-Barcode
-   ↓
-Firestore
-   ↓
-Can found?
-   ↓
-Add to collection
+Catalog update:
+Last successful update: August 11, 2026
 ```
 
-If not found, search the external catalog.
+Do not expose technical error messages to normal users.
 
 ---
 
-## Rarity
+# 28. Future Data Improvements
 
-Possible rarity levels:
-
-```text
-Common
-Uncommon
-Rare
-Very Rare
-Limited Edition
-```
-
-Rarity should initially be manually managed or based on reliable catalog information.
-
-Do not invent rarity automatically.
-
----
-
-## Achievements
-
-Examples:
-
-```text
-First Can
-100 Cans
-Collector
-World Traveler
-Ultra Fan
-Monster Hunter
-```
-
----
-
-## Public Collector Profiles
-
-Allow users to create a public collection profile.
+The architecture should make it possible to add additional providers later.
 
 Example:
 
 ```text
-/collector/{username}
+Open Food Facts
+       |
+       v
+Provider Adapter
+       |
+       v
+MonsterCan
+
+Monster Official
+       |
+       v
+Provider Adapter
+       |
+       v
+MonsterCan
+
+Community Dataset
+       |
+       v
+Provider Adapter
+       |
+       v
+MonsterCan
 ```
 
-Display:
-
-```text
-Collector Name
-
-124 cans
-87 unique cans
-12 countries
-38 flavors
-```
-
-Only implement this after the core application is stable.
-
----
-
-## Collection Sharing
-
-Allow users to share their collection through a public URL.
-
----
-
-## Collector Ranking
-
-Possible future leaderboard:
-
-```text
-1. Collector A — 432 cans
-2. Collector B — 287 cans
-3. Collector C — 201 cans
-```
-
-Only implement after authentication and public profiles are working.
-
----
-
-# 21. UI Guidelines
-
-The application should have a modern energy-drink-inspired visual identity without becoming visually overwhelming.
-
-Use:
-
-* Dark theme
-* High contrast
-* Card-based catalog
-* Large product images
-* Clear buttons
-* Responsive design
-* Simple animations
-
-Prioritize usability over visual effects.
-
-The application should feel like a collection management tool, not an e-commerce website.
-
----
-
-# 22. Error Handling
-
-Implement proper handling for:
-
-* Firebase errors
-* Network errors
-* External API errors
-* Empty catalog
-* Missing images
-* Missing product information
-* Failed synchronization
-* Unauthorized requests
-
-The UI should display friendly messages.
-
-Never expose raw backend errors to users.
-
----
-
-# 23. Loading States
-
-Every asynchronous operation should have a loading state.
-
-Examples:
-
-```text
-Loading catalog...
-
-Loading collection...
-
-Adding to collection...
-
-Updating...
-
-Synchronizing catalog...
-```
-
-Avoid blank screens while data is loading.
-
----
-
-# 24. Empty States
-
-Create useful empty states.
+Each provider should have its own adapter.
 
 Example:
 
 ```text
-Your collection is empty.
-
-Start building your Monster Vault.
-
-[ Browse Catalog ]
+services/catalog/providers/
+├── openFoodFactsProvider.ts
+├── monsterEnergyProvider.ts
+└── communityProvider.ts
 ```
 
-Wishlist:
+Do not mix provider-specific logic.
+
+---
+
+# 29. Provider Interface
+
+Create a generic interface so new providers can be added easily.
+
+Example:
+
+```typescript
+interface CatalogProvider {
+  getMonsterCans(): Promise<ExternalMonsterCan[]>;
+}
+```
+
+Then:
 
 ```text
-Your wishlist is empty.
-
-Find a can you'd like to collect.
-
-[ Browse Catalog ]
+OpenFoodFactsProvider implements CatalogProvider
 ```
 
----
-
-# 25. Security
-
-Follow these rules:
-
-* Never expose private credentials.
-* Use Firebase Authentication.
-* Use Firestore security rules.
-* Users can only modify their own collection.
-* Users can only modify their own wishlist.
-* Users cannot modify the global catalog directly.
-* Catalog synchronization must happen through trusted backend code.
-* Validate all data received from external APIs.
+Future providers can implement the same interface.
 
 ---
 
-# 26. Development Strategy
+# 30. Recommended Development Order
 
-Develop the project incrementally.
+Implement this feature in the following order.
 
-Do NOT attempt to implement all features at once.
+## Phase 1 — Data Model
 
-Follow this order:
+* Create `MonsterCan`.
+* Create `CanSource`.
+* Create Firestore structure.
+* Create TypeScript types.
 
-### Step 1
+## Phase 2 — Manual Catalog
 
-Create the React + TypeScript project.
+* Create a small set of test cans.
+* Display them in the Catalog page.
+* Implement can details.
 
-### Step 2
+## Phase 3 — Open Food Facts
 
-Configure Firebase.
+* Create provider.
+* Test API access.
+* Fetch Monster products.
+* Normalize products.
+* Validate products.
 
-### Step 3
+## Phase 4 — Firestore Import
 
-Create TypeScript models.
+* Implement initial import.
+* Implement duplicate detection.
+* Implement batch writes.
+* Add synchronization metadata.
 
-### Step 4
+## Phase 5 — Cloud Function
 
-Create Firestore structure.
+* Move synchronization to Firebase Functions.
+* Add scheduled execution.
+* Add logging.
+* Add error handling.
 
-### Step 5
+## Phase 6 — Catalog Improvements
 
-Implement authentication.
+* Search
+* Filters
+* Country
+* Flavor
+* Size
+* Release year
+* Discontinued status
 
-### Step 6
+## Phase 7 — Collection Integration
 
-Create the Catalog page.
+Ensure users can:
 
-### Step 7
+* Add catalog items to collection.
+* Track quantity.
+* Remove items.
+* Add items to wishlist.
 
-Create the Can Details page.
+## Phase 8 — Data Quality
 
-### Step 8
-
-Implement adding/removing cans from the collection.
-
-### Step 9
-
-Create My Collection.
-
-### Step 10
-
-Create Wishlist.
-
-### Step 11
-
-Add search.
-
-### Step 12
-
-Add filters.
-
-### Step 13
-
-Add collection statistics.
-
-### Step 14
-
-Find and integrate the external catalog source.
-
-### Step 15
-
-Create the Cloud Function for daily synchronization.
-
-### Step 16
-
-Add synchronization metadata and logging.
-
-### Step 17
-
-Improve responsive design and UX.
-
-### Step 18
-
-Only after the MVP is stable, implement advanced features.
+* Source tracking
+* Verification
+* Manual fields
+* Duplicate detection
+* Better image handling
 
 ---
 
-# 27. Important Development Rules
+# 31. Important Restrictions
 
-Follow these rules throughout development:
+Do NOT:
 
-1. Keep the architecture simple.
-2. Avoid unnecessary dependencies.
-3. Prefer readable code over clever code.
-4. Use TypeScript types everywhere appropriate.
-5. Keep Firebase access inside service modules.
-6. Keep UI components independent from Firebase implementation details.
-7. Do not duplicate catalog data inside user collections.
-8. Do not call external APIs directly from UI components.
-9. Handle loading, errors, and empty states.
-10. Do not implement future features before the current phase is stable.
-11. Do not introduce complex state management unless it becomes necessary.
-12. Keep functions small and focused.
-13. Use meaningful names.
-14. Add comments only when the reason behind the code is not obvious.
-15. Preserve existing functionality when adding new features.
+* Scrape websites without permission.
+* Copy copyrighted datasets without permission.
+* Depend on unofficial APIs without checking their availability and terms.
+* Delete historical products.
+* Delete the entire catalog if an API fails.
+* Let external API models leak into the frontend.
+* Store API credentials in the React application.
+* Automatically merge products when the match is uncertain.
+* Assume that the absence of a product means it was discontinued.
 
 ---
 
-# 28. Definition of Done — MVP
+# 32. Success Criteria
 
-The MVP is considered complete when a user can:
+The catalog system is complete when:
 
-1. Create an account.
-2. Log in.
-3. Browse Monster Energy cans.
-4. Search for cans.
-5. Open a can's details.
-6. Add a can to their collection.
-7. Increase or decrease the quantity.
-8. Remove a can from their collection.
-9. View their complete collection.
-10. Add a can to their wishlist.
-11. Remove a can from their wishlist.
-12. Move a can from wishlist to collection.
-13. View basic collection statistics.
-14. Use the application on desktop and mobile.
-15. See useful loading and error states.
-
-The catalog synchronization can be considered a separate milestone after the basic application is working.
+1. Firestore contains Monster Energy cans.
+2. The React application can display those cans.
+3. The frontend only depends on Firestore.
+4. Open Food Facts can be used as an external data provider.
+5. Products can be normalized into the internal `MonsterCan` model.
+6. Products can be imported without creating duplicates.
+7. Existing products can be updated.
+8. Historical products are preserved.
+9. External API failures do not destroy existing data.
+10. Synchronization can run repeatedly without creating duplicates.
+11. Synchronization can run automatically once per day.
+12. Synchronization metadata is stored.
+13. Errors are logged.
+14. Images and missing fields are handled gracefully.
+15. The architecture allows additional providers to be added later.
 
 ---
 
-# 29. GitHub Development Approach
+# 33. Final Architecture
 
-Create small, focused commits.
-
-Examples:
+The final architecture should look like:
 
 ```text
-feat: initialize React application
-feat: configure Firebase
-feat: add authentication
-feat: create can catalog
-feat: add can details page
-feat: add collection management
-feat: add wishlist
-feat: add catalog search
-feat: add collection statistics
-feat: add catalog synchronization
-fix: handle missing can images
-fix: improve collection loading state
+                    ┌──────────────────────┐
+                    │   Open Food Facts    │
+                    └──────────┬───────────┘
+                               │
+                               ▼
+                    ┌──────────────────────┐
+                    │ Catalog Provider      │
+                    │ Adapter               │
+                    └──────────┬───────────┘
+                               │
+                               ▼
+                    ┌──────────────────────┐
+                    │ Data Normalization    │
+                    └──────────┬───────────┘
+                               │
+                               ▼
+                    ┌──────────────────────┐
+                    │ Validation & Matching │
+                    └──────────┬───────────┘
+                               │
+                               ▼
+                    ┌──────────────────────┐
+                    │      Firestore        │
+                    │    Monster Catalog    │
+                    └──────────┬───────────┘
+                               │
+                               ▼
+                    ┌──────────────────────┐
+                    │      React App        │
+                    │                       │
+                    │ Catalog               │
+                    │ Collection            │
+                    │ Wishlist              │
+                    │ Statistics            │
+                    └──────────────────────┘
 ```
 
-Avoid large commits containing unrelated features.
+The most important principle is:
 
----
+> **External APIs are data providers. Firestore is the source of truth for Monster Vault.**
 
-# 30. Final Goal
-
-The final application should feel like a digital vault for Monster Energy collectors.
-
-The core experience should be:
-
-```text
-Discover a can
-      ↓
-View its information
-      ↓
-Add it to Wishlist
-      ↓
-Get the can
-      ↓
-Add it to Collection
-      ↓
-Track the collection
-      ↓
-Complete the catalog
-```
-
-The application should start simple but have a clean architecture that allows future features such as barcode scanning, achievements, rarity, public collections, sharing, and collector rankings without requiring a complete rewrite.
+This ensures that Monster Vault can maintain a historical catalog even when external products disappear, APIs change, or external services become unavailable.
