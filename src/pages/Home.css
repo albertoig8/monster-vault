@@ -1,0 +1,260 @@
+.home {
+  padding: 2rem;
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+.welcome-section {
+  text-align: center;
+  margin-bottom: 3rem;
+}
+
+.welcome-section h1 {
+  font-size: 2.5rem;
+  color: #ff6600;
+  margin: 0 0 0.5rem 0;
+}
+
+.welcome-section p {
+  font-size: 1.1rem;
+  color: #aaa;
+  margin: 0;
+}
+
+.stats-section {
+  margin-bottom: 3rem;
+}
+
+.stats-section h2 {
+  font-size: 1.8rem;
+  color: #ff6600;
+  margin: 0 0 1.5rem 0;
+  border-bottom: 2px solid #333;
+  padding-bottom: 1rem;
+}
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.stat-card {
+  background: linear-gradient(135deg, #1a1f3a 0%, #2d1b69 100%);
+  border: 1px solid #ff6600;
+  border-radius: 8px;
+  padding: 1.5rem;
+  text-align: center;
+  transition: all 0.3s ease;
+  cursor: default;
+}
+
+.stat-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 24px rgba(255, 102, 0, 0.3);
+}
+
+.stat-number {
+  font-size: 2.5rem;
+  font-weight: bold;
+  color: #ff6600;
+  margin-bottom: 0.5rem;
+}
+
+.stat-label {
+  font-size: 1rem;
+  color: #aaa;
+}
+
+.progress-section {
+  background-color: #0f1426;
+  padding: 1.5rem;
+  border-radius: 8px;
+  border-left: 4px solid #ff6600;
+}
+
+.progress-section h3 {
+  margin: 0 0 1rem 0;
+  color: #ff6600;
+  font-size: 1.2rem;
+}
+
+.progress-bar-container {
+  margin-top: 1rem;
+}
+
+.progress-bar {
+  width: 100%;
+  height: 30px;
+  background-color: #1a1f3a;
+  border-radius: 4px;
+  overflow: hidden;
+  border: 1px solid #333;
+}
+
+.progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #ff6600, #ff9933);
+  transition: width 0.5s ease;
+}
+
+.progress-text {
+  margin-top: 0.5rem;
+  color: #aaa;
+  font-size: 0.9rem;
+}
+
+.recent-section {
+  margin-bottom: 2rem;
+}
+
+.recent-section h2 {
+  font-size: 1.8rem;
+  color: #ff6600;
+  margin: 0 0 1.5rem 0;
+  border-bottom: 2px solid #333;
+  padding-bottom: 1rem;
+}
+
+.recent-cans-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 1rem;
+}
+
+.recent-can-card {
+  background-color: #0f1426;
+  border: 1px solid #333;
+  border-radius: 8px;
+  overflow: hidden;
+  transition: all 0.3s ease;
+}
+
+.recent-can-card:hover {
+  border-color: #ff6600;
+  transform: translateY(-5px);
+  box-shadow: 0 8px 16px rgba(255, 102, 0, 0.2);
+}
+
+.can-image-container {
+  width: 100%;
+  height: 150px;
+  background-color: #1a1f3a;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.can-image-container img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.no-image {
+  color: #666;
+  font-size: 0.9rem;
+  text-align: center;
+}
+
+.can-info {
+  padding: 1rem;
+}
+
+.can-info h4 {
+  margin: 0 0 0.5rem 0;
+  font-size: 0.95rem;
+  color: #ff6600;
+}
+
+.can-info .flavor {
+  margin: 0 0 0.5rem 0;
+  font-size: 0.85rem;
+  color: #aaa;
+}
+
+.can-info .quantity {
+  margin: 0;
+  font-size: 0.85rem;
+  color: #888;
+}
+
+.empty-state {
+  text-align: center;
+  padding: 3rem;
+  background-color: #0f1426;
+  border-radius: 8px;
+  border: 2px dashed #333;
+}
+
+.empty-state p {
+  font-size: 1.2rem;
+  color: #aaa;
+  margin: 0 0 1.5rem 0;
+}
+
+.cta-button {
+  background-color: #ff6600;
+  color: white;
+  border: none;
+  padding: 0.75rem 2rem;
+  border-radius: 4px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.cta-button:hover {
+  background-color: #ff5500;
+  transform: translateY(-2px);
+}
+
+.loading,
+.error {
+  text-align: center;
+  padding: 2rem;
+  font-size: 1.1rem;
+}
+
+.loading {
+  color: #aaa;
+}
+
+.error {
+  color: #c33;
+}
+
+@media (max-width: 768px) {
+  .home {
+    padding: 1rem;
+  }
+
+  .welcome-section h1 {
+    font-size: 1.8rem;
+  }
+
+  .stats-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .recent-cans-grid {
+    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+  }
+}
+
+@media (max-width: 480px) {
+  .welcome-section h1 {
+    font-size: 1.5rem;
+  }
+
+  .stats-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .recent-cans-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
