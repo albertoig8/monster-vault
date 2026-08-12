@@ -5,9 +5,12 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
+    "dev:emulator": "firebase emulators:start --import=./emulator-data",
+    "dev:with-emulator": "concurrently \"npm run dev:emulator\" \"npm run dev\"",
     "build": "tsc -b && vite build",
     "lint": "oxlint",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "seed": "node scripts/seedFirestore.js"
   },
   "dependencies": {
     "firebase": "^12.17.1",

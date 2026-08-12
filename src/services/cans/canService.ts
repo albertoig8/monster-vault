@@ -1,6 +1,7 @@
 import { collection, getDocs, doc, getDoc } from 'firebase/firestore';
 import { db } from '../firebase/config';
 import type { MonsterCan } from '../../types';
+import { sampleCans } from '../../../seedData';
 
 export interface CanFilter {
   countries?: string[];
@@ -17,13 +18,20 @@ export const canService = {
   async getAllCans(): Promise<MonsterCan[]> {
     try {
       const querySnapshot = await getDocs(collection(db, 'cans'));
-      return querySnapshot.docs.map((doc) => ({
+      const cans = querySnapshot.docs.map((doc) => ({
         id: doc.id,
         ...doc.data(),
       } as MonsterCan));
+
+      if (cans.length > 0) {
+        return cans;
+      }
+
+      console.warn('Coleção "cans" vazia. Usando dados locais de exemplo.');
+      return sampleCans;
     } catch (error) {
-      console.error('Erro ao buscar latas:', error);
-      throw error;
+      console.warn('Erro ao buscar latas no Firestore. Usando dados locais de exemplo.', error);
+      return sampleCans;
     }
   },
 

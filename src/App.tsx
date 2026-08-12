@@ -10,6 +10,7 @@ import Catalog from './pages/Catalog';
 import CanDetails from './pages/CanDetails';
 import Collection from './pages/Collection';
 import Wishlist from './pages/Wishlist';
+import AdminPanel from './pages/AdminPanel';
 
 import './App.css';
 
@@ -82,6 +83,14 @@ function App() {
           element={
             <ProtectedRoute user={user}>
               <Wishlist />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/admin"
+          element={
+            <ProtectedRoute user={user}>
+              <AdminPanel />
             </ProtectedRoute>
           }
         />
