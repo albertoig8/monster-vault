@@ -177,12 +177,149 @@
   background-color: #ff5500;
 }
 
-.loading,
-.error {
-  text-align: center;
-  padding: 2rem;
+/* Filters */
+.filter-toggle-btn {
+  background-color: #2d1b69;
+  color: #ff6600;
+  border: 2px solid #ff6600;
+  padding: 0.75rem 1rem;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 0.95rem;
+  transition: all 0.3s ease;
+}
+
+.filter-toggle-btn:hover {
+  background-color: #ff6600;
+  color: white;
+}
+
+.filters-section {
+  background-color: #0f1426;
+  border: 2px solid #333;
+  border-radius: 8px;
+  padding: 1.5rem;
+  margin-bottom: 2rem;
+  animation: slideDown 0.3s ease;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.filters-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+  border-bottom: 1px solid #333;
+  padding-bottom: 1rem;
+}
+
+.filters-header h3 {
+  margin: 0;
+  color: #ff6600;
   font-size: 1.1rem;
 }
+
+.clear-filters-btn {
+  background-color: transparent;
+  color: #ff6600;
+  border: 1px solid #ff6600;
+  padding: 0.4rem 0.8rem;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 0.85rem;
+  transition: all 0.3s ease;
+}
+
+.clear-filters-btn:hover {
+  background-color: #ff6600;
+  color: white;
+}
+
+.filter-group {
+  margin-bottom: 1.5rem;
+}
+
+.filter-group h4 {
+  margin: 0 0 0.75rem 0;
+  color: #aaa;
+  font-size: 0.95rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.filter-options {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 0.75rem;
+}
+
+.filter-checkbox {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  cursor: pointer;
+  color: #ccc;
+  font-size: 0.9rem;
+  transition: color 0.2s ease;
+}
+
+.filter-checkbox:hover {
+  color: #ff6600;
+}
+
+.filter-checkbox input {
+  accent-color: #ff6600;
+  cursor: pointer;
+  width: 16px;
+  height: 16px;
+}
+
+.filter-checkbox input:checked {
+  background-color: #ff6600;
+}
+
+.sync-info {
+  font-size: 0.9rem;
+  color: #ff6600;
+  margin: 0.5rem 0 0 0 !important;
+}
+
+.discontinued-badge {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background-color: rgba(204, 51, 51, 0.9);
+  color: white;
+  padding: 0.4rem 0.8rem;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.can-image-container {
+  position: relative;
+}
+
+.verified {
+  margin: 0.5rem 0 0 0;
+  color: #4a4;
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
 
 .loading {
   color: #aaa;

@@ -1,17 +1,30 @@
+/** Source tracking for catalog synchronization */
+export interface CanSource {
+  provider: string; // 'open-food-facts', 'monster-energy', 'community', 'manual'
+  externalId?: string;
+  url?: string;
+  lastCheckedAt?: any; // Firestore Timestamp
+}
+
+/** Monster Energy can product information */
 export interface MonsterCan {
   id: string;
+  brand: string; // e.g., "Monster Energy"
   name: string;
   flavor?: string;
   description?: string;
   category?: string;
-  size?: string;
   country?: string;
-  releaseYear?: number;
-  imageUrl?: string;
+  size?: string;
   barcode?: string;
+  imageUrl?: string;
+  releaseYear?: number;
   caffeine?: number;
   sugar?: number;
   discontinued: boolean;
+  edition?: string; // Special edition info
+  verified: boolean; // Manually verified
+  sources: CanSource[]; // Track data sources
   createdAt: any; // Firestore Timestamp
   updatedAt: any; // Firestore Timestamp
 }
@@ -35,6 +48,7 @@ export interface UserProfile {
   createdAt: any; // Firestore Timestamp
 }
 
+/** Catalog synchronization metadata and tracking */
 export interface CatalogMetadata {
   lastStartedAt?: any;
   lastCompletedAt?: any;
@@ -42,6 +56,7 @@ export interface CatalogMetadata {
   totalProcessed?: number;
   totalCreated?: number;
   totalUpdated?: number;
+  totalSkipped?: number;
   lastError?: string;
 }
 
